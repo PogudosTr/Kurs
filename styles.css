@@ -1,0 +1,134 @@
+/* styles.css */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f7f9fc;
+    color: #333;
+    padding: 20px;
+    max-width: 850px;
+    margin: 20px auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #007bff;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+h2 {
+    color: #555;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+/* --- Контролы записи и загрузки --- */
+#controls, #upload-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+/* Стили кнопок */
+button {
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    transition: background-color 0.3s, transform 0.1s;
+    white-space: nowrap; /* Предотвращает перенос текста на кнопках */
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+#recordButton {
+    background-color: #28a745;
+    color: white;
+}
+#recordButton:hover:not(:disabled) { background-color: #218838; }
+
+#stopButton {
+    background-color: #dc3545;
+    color: white;
+}
+#stopButton:hover:not(:disabled) { background-color: #c82333; }
+
+#uploadButton {
+    background-color: #ffc107;
+    color: #333;
+}
+#uploadButton:hover:not(:disabled) { background-color: #e0a800; }
+
+
+button:disabled { 
+    background-color: #ced4da; 
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+/* Стиль для input type="file" */
+#fileInput {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    flex-grow: 1;
+    background-color: #f8f9fa;
+}
+
+
+/* --- Статус --- */
+#status {
+    padding: 15px;
+    text-align: center;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.status-ready { background-color: #e9ecef; color: #6c757d; border: 1px solid #dee2e6; }
+.status-recording { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+.status-processing { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+.status-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.status-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+/* --- Результат --- */
+#transcription-result {
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+#resultText {
+    white-space: pre-wrap;
+    padding: 15px;
+    border: 1px dashed #ced4da;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    min-height: 50px;
+}
+
+/* --- Адаптивность для мобильных устройств --- */
+@media (max-width: 600px) {
+    #controls, #upload-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+    button, #fileInput {
+        width: 100%;
+    }
+}
