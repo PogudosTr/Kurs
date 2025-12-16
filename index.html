@@ -3,139 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Аудио-транскрибатор на PHP & Whisper</title>
+    <title>Транскрибатор</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>🎙️ Запись и Транскрибация Аудио</h1>
+
+<div class="container">
+    <h1>Транскрибатор</h1>
     
-    <h2>🔴 Запись с Микрофона</h2>
-    <div id="controls">
-        <button id="recordButton">Начать Запись</button>
-        <button id="stopButton" disabled>Остановить Запись</button>
+    <div class="section">
+        <h2>Голос</h2>
+        <button id="recordButton">Запись</button>
+        <button id="stopButton" disabled>Стоп</button>
     </div>
 
-    <h2>📁 Загрузить Файл</h2>
-    <div id="upload-controls">
+    <div class="section">
+        <h2>Файл</h2>
         <input type="file" id="fileInput" accept="audio/*">
-        <button id="uploadButton">Загрузить и Транскрибировать</button>
+        <button id="uploadButton">Обработать</button>
     </div>
 
-    <div id="status" class="status-ready">Готов к записи или загрузке.</div>
-    <div id="transcription-result">
-        <h2>Результат Транскрибации:</h2>
-        <p id="resultText">Здесь появится расшифрованный текст...</p>
+    <div id="status">Готов к работе</div>
+
+    <div class="section">
+        <div class="history-header">
+            <h2>История</h2>
+            <button id="clearHistoryButton" class="clear-all" style="display:none">Очистить всё</button>
+        </div>
+        <div id="historyList">
+            <p id="noDataText" style="color:#999; font-size:0.9rem">Пусто</p>
+        </div>
     </div>
+</div>
 
-    <script>
-        const recordButton = document.getElementById('recordButton');
-        const stopButton = document.getElementById('stopButton');
-        const fileInput = document.getElementById('fileInput');
-        const uploadButton = document.getElementById('uploadButton');
-        const statusDiv = document.getElementById('status');
-        const resultText = document.getElementById('resultText');
+<script>
+    const recordButton = document.getElementById('recordButton');
+    const stopButton = document.getElementById('stopButton');
+    const fileInput = document.getElementById('fileInput');
+    const uploadButton = document.getElementById('uploadButton');
+    const statusDiv = document.getElementById('status');
+    const historyList = document.getElementById('historyList');
+    const noDataText = document.getElementById('noDataText');
+    const clearHistoryButton = document.getElementById('clearHistoryButton');
 
-        let mediaRecorder;
-        let audioChunks = [];
-        let stream;
+    const STORAGE_KEY = 'simple_transcription_v1';
+    let transcriptionsHistory = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 
-        // --- 1. Начать запись ---
-        recordButton.onclick = async () => {
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                audioChunks = [];
+    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(transcriptionsHistory)); }
 
-                mediaRecorder.ondataavailable = event => {
-                    audioChunks.push(event.data);
-                };
+    function renderHistory() {
+        if (transcriptionsHistory.length > 0) {
+            noDataText.style.display = 'none';
+            clearHistoryButton.style.display = 'inline';
+        } else {
+            noDataText.style.display = 'block';
+            clearHistoryButton.style.display = 'none';
+            historyList.innerHTML = '';
+            historyList.appendChild(noDataText);
+            return;
+        }
 
-                mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                    uploadAudio(audioBlob, 'voice_message.webm');
-                    stream.getTracks().forEach(track => track.stop());
-                };
+        historyList.innerHTML = '';
+        transcriptionsHistory.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'history-item';
+            div.innerHTML = `
+                <div class="history-item-header">
+                    <span>${item.fileName} — ${item.time}</span>
+                    <button class="delete-btn" onclick="deleteItem(${index})">удалить</button>
+                </div>
+                <p>${item.text}</p>
+            `;
+            historyList.appendChild(div);
+        });
+    }
 
-                mediaRecorder.start();
-                recordButton.disabled = true;
-                stopButton.disabled = false;
-                uploadButton.disabled = true;
-                statusDiv.className = 'status-recording';
-                statusDiv.textContent = 'Идет запись...';
-                resultText.textContent = 'Ожидание транскрибации...';
+    window.deleteItem = (index) => {
+        if(confirm('Удалить запись?')) {
+            transcriptionsHistory.splice(index, 1);
+            save();
+            renderHistory();
+        }
+    };
 
-            } catch (err) {
-                console.error('Ошибка доступа к микрофону:', err);
-                statusDiv.className = 'status-error';
-                statusDiv.textContent = 'Ошибка доступа к микрофону. Проверьте разрешения.';
-            }
-        };
+    clearHistoryButton.onclick = () => {
+        if(confirm('Очистить всю историю?')) {
+            transcriptionsHistory = [];
+            save();
+            renderHistory();
+        }
+    };
 
-        // --- 2. Остановить запись ---
-        stopButton.onclick = () => {
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-                recordButton.disabled = true;
-                stopButton.disabled = true;
-                statusDiv.className = 'status-processing';
-                statusDiv.textContent = 'Обработка и транскрибация...';
-            }
-        };
-        
-        // --- 3. Обработчик загрузки файла ---
-        uploadButton.onclick = () => {
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                statusDiv.className = 'status-error';
-                statusDiv.textContent = 'Пожалуйста, выберите аудиофайл для загрузки.';
-                return;
-            }
-            
+    let mediaRecorder;
+    let audioChunks = [];
+
+    recordButton.onclick = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                send(blob, `record_${Date.now()}.webm`);
+                stream.getTracks().forEach(t => t.stop());
+            };
+            mediaRecorder.start();
             recordButton.disabled = true;
-            stopButton.disabled = true;
-            uploadButton.disabled = true;
-            statusDiv.className = 'status-processing';
-            statusDiv.textContent = `Обработка файла "${file.name}"...`;
-            resultText.textContent = 'Ожидание транскрибации...';
+            stopButton.disabled = false;
+            statusDiv.textContent = 'Запись идет...';
+        } catch (err) {
+            statusDiv.className = 'status-error';
+            statusDiv.textContent = 'Нет доступа к микрофону';
+        }
+    };
 
-            uploadAudio(file, file.name);
-        };
+    stopButton.onclick = () => {
+        mediaRecorder.stop();
+        stopButton.disabled = true;
+        recordButton.disabled = false;
+        statusDiv.textContent = 'Обработка...';
+    };
 
-        // --- 4. Отправить файл на сервер ---
-        function uploadAudio(audioBlob, fileName) {
-            const formData = new FormData();
-            formData.append('audio_file', audioBlob, fileName);
+    uploadButton.onclick = () => {
+        const file = fileInput.files[0];
+        if (!file) return alert('Выберите файл');
+        statusDiv.textContent = 'Загрузка...';
+        send(file, file.name);
+    };
 
-            fetch('upload.php', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.json())
+    function send(blob, name) {
+        const fd = new FormData();
+        fd.append('audio_file', blob, name);
+        fetch('upload.php', { method: 'POST', body: fd })
+            .then(r => r.json())
             .then(data => {
-                // Разблокировка после ответа
-                recordButton.disabled = false;
-                uploadButton.disabled = false;
-                
                 if (data.success) {
+                    const now = new Date();
+                    transcriptionsHistory.unshift({
+                        time: now.toLocaleDateString() + ' ' + now.toLocaleTimeString(),
+                        text: data.transcription,
+                        fileName: name
+                    });
+                    save();
+                    renderHistory();
                     statusDiv.className = 'status-success';
-                    statusDiv.textContent = 'Транскрибация завершена!';
-                    resultText.textContent = data.transcription;
+                    statusDiv.textContent = 'Готово';
                 } else {
                     statusDiv.className = 'status-error';
-                    statusDiv.textContent = 'Ошибка транскрибации: ' + (data.error || 'Неизвестная ошибка.');
-                    resultText.textContent = 'Не удалось получить транскрипцию.';
+                    statusDiv.textContent = 'Ошибка сервера';
                 }
             })
-            .catch(error => {
-                recordButton.disabled = false;
-                uploadButton.disabled = false;
-
+            .catch(() => {
                 statusDiv.className = 'status-error';
-                statusDiv.textContent = 'Ошибка сети или сервера.';
-                resultText.textContent = 'Сетевая ошибка: ' + error.message;
+                statusDiv.textContent = 'Ошибка сети';
             });
-        }
-    </script>
+    }
+
+    renderHistory();
+</script>
+
 </body>
 </html>

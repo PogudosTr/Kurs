@@ -1,134 +1,153 @@
-/* styles.css */
-
+/* Базовые настройки */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f7f9fc;
-    color: #333;
-    padding: 20px;
-    max-width: 850px;
-    margin: 20px auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #1a1a1a;
+    line-height: 1.6;
+    background: #ffffff; /* Белоснежный основной фон */
+    margin: 0;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 h1 {
-    color: #007bff;
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 2.5rem;
     text-align: center;
-    margin-bottom: 25px;
+    color: #000;
 }
 
 h2 {
-    color: #555;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 5px;
-    margin-top: 25px;
-    margin-bottom: 15px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #888;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.2rem;
 }
 
-/* --- Контролы записи и загрузки --- */
-#controls, #upload-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    padding: 15px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    margin-bottom: 20px;
+/* Секции (блоки) — теперь серые */
+.section {
+    background: #f7f7f7;       /* Светло-серый фон блока */
+    border: 1px solid #ededed; /* Едва заметная граница */
+    padding: 24px;
+    margin-bottom: 24px;
+    border-radius: 16px;       /* Более мягкое скругление */
+    box-shadow: none;          /* Убираем тени для минимализма */
 }
 
-/* Стили кнопок */
+/* Кнопки */
 button {
-    padding: 12px 25px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    border: none;
-    border-radius: 6px;
-    transition: background-color 0.3s, transform 0.1s;
-    white-space: nowrap; /* Предотвращает перенос текста на кнопках */
-}
-
-button:active {
-    transform: scale(0.98);
-}
-
-#recordButton {
-    background-color: #28a745;
-    color: white;
-}
-#recordButton:hover:not(:disabled) { background-color: #218838; }
-
-#stopButton {
-    background-color: #dc3545;
-    color: white;
-}
-#stopButton:hover:not(:disabled) { background-color: #c82333; }
-
-#uploadButton {
-    background-color: #ffc107;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 10px 20px;
+    border: 1px solid #e0e0e0;
+    background: #ffffff;       /* Белые кнопки на сером фоне для контраста */
     color: #333;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.2s ease;
 }
-#uploadButton:hover:not(:disabled) { background-color: #e0a800; }
 
+button:hover {
+    background: #000;          /* Инверсия при наведении (стильно) */
+    color: #fff;
+    border-color: #000;
+}
 
-button:disabled { 
-    background-color: #ced4da; 
-    color: #6c757d;
+button:disabled {
+    opacity: 0.3;
     cursor: not-allowed;
+    background: transparent;
 }
 
-/* Стиль для input type="file" */
-#fileInput {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    flex-grow: 1;
-    background-color: #f8f9fa;
+/* Кнопка записи */
+#recordButton.recording {
+    color: #eb5757;
+    border-color: #eb5757;
+    background: #fff;
 }
 
+#recordButton.recording:hover {
+    background: #eb5757;
+    color: #fff;
+}
 
-/* --- Статус --- */
+/* Статус */
 #status {
-    padding: 15px;
+    font-size: 0.85rem;
+    margin: 20px 0;
+    padding: 14px;
+    border-radius: 12px;
+    background: #eeeeee;       /* Более темный серый для статуса */
+    color: #555;
+    border-left: none;         /* Убрали полоску для чистоты */
     text-align: center;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-weight: bold;
-    font-size: 1.1em;
 }
 
-.status-ready { background-color: #e9ecef; color: #6c757d; border: 1px solid #dee2e6; }
-.status-recording { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-.status-processing { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-.status-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-.status-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-
-/* --- Результат --- */
-#transcription-result {
-    padding: 15px;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    background-color: #ffffff;
+.status-error { 
+    color: #eb5757 !important; 
+    background: #fff5f5 !important;
 }
 
-#resultText {
-    white-space: pre-wrap;
-    padding: 15px;
-    border: 1px dashed #ced4da;
-    border-radius: 6px;
-    background-color: #f8f9fa;
-    min-height: 50px;
+.status-success { 
+    color: #27ae60 !important; 
+    background: #f2fcf5 !important;
 }
 
-/* --- Адаптивность для мобильных устройств --- */
-@media (max-width: 600px) {
-    #controls, #upload-controls {
-        flex-direction: column;
-        gap: 10px;
-    }
-    button, #fileInput {
-        width: 100%;
-    }
+/* История */
+.history-item {
+    margin-top: 16px;
+    padding: 16px;
+    background: #ffffff;       /* Карточки внутри истории — белые */
+    border-radius: 12px;
+    border: 1px solid #eee;
+}
+
+.history-item-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: #aaa;
+    margin-bottom: 4px;
+}
+
+.history-item p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #222;
+}
+
+/* Кнопки удаления */
+.delete-btn {
+    border: none;
+    background: none;
+    color: #ccc;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.delete-btn:hover {
+    color: #eb5757;
+    background: none;
+}
+
+.clear-all {
+    font-size: 0.75rem;
+    color: #999;
+    border: none;
+    background: none;
+    text-decoration: none;
+}
+
+.clear-all:hover {
+    color: #333;
+    text-decoration: underline;
 }
