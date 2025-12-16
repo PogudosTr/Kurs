@@ -32,24 +32,23 @@ h2 {
     margin-bottom: 1.2rem;
 }
 
-/* Секции (блоки) — теперь серые */
 .section {
-    background: #f7f7f7;       /* Светло-серый фон блока */
-    border: 1px solid #ededed; /* Едва заметная граница */
+    background: #f7f7f7;     
+    border: 1px solid #ededed;
     padding: 24px;
     margin-bottom: 24px;
-    border-radius: 16px;       /* Более мягкое скругление */
-    box-shadow: none;          /* Убираем тени для минимализма */
+    border-radius: 16px;    
+    box-shadow: none;         
 }
 
-/* Кнопки */
+
 button {
     font-family: inherit;
     font-size: 0.85rem;
     font-weight: 500;
     padding: 10px 20px;
     border: 1px solid #e0e0e0;
-    background: #ffffff;       /* Белые кнопки на сером фоне для контраста */
+    background: #ffffff;       
     color: #333;
     cursor: pointer;
     border-radius: 10px;
@@ -57,7 +56,7 @@ button {
 }
 
 button:hover {
-    background: #000;          /* Инверсия при наведении (стильно) */
+    background: #000;          
     color: #fff;
     border-color: #000;
 }
@@ -68,7 +67,6 @@ button:disabled {
     background: transparent;
 }
 
-/* Кнопка записи */
 #recordButton.recording {
     color: #eb5757;
     border-color: #eb5757;
@@ -80,15 +78,14 @@ button:disabled {
     color: #fff;
 }
 
-/* Статус */
 #status {
     font-size: 0.85rem;
     margin: 20px 0;
     padding: 14px;
     border-radius: 12px;
-    background: #eeeeee;       /* Более темный серый для статуса */
+    background: #eeeeee;      
     color: #555;
-    border-left: none;         /* Убрали полоску для чистоты */
+    border-left: none;       
     text-align: center;
 }
 
@@ -102,11 +99,11 @@ button:disabled {
     background: #f2fcf5 !important;
 }
 
-/* История */
+
 .history-item {
     margin-top: 16px;
     padding: 16px;
-    background: #ffffff;       /* Карточки внутри истории — белые */
+    background: #ffffff;     
     border-radius: 12px;
     border: 1px solid #eee;
 }
@@ -125,7 +122,6 @@ button:disabled {
     color: #222;
 }
 
-/* Кнопки удаления */
 .delete-btn {
     border: none;
     background: none;
